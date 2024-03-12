@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <form action="./"><button class="navbar-brand btn btn-link">SettleMate</button></form>
+        </div>
+        
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <form class="nav-link" action="./profile">
+                    <button class="btn btn-link text-white"><%= userName %></button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row row-cols-1 row-cols-md-4">
+            <% for (let i = -1; i < mytrips.length; i++) { if (i==-1){ %>
+                <div class="col mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="./createtrip">
+                                <button class="card text-center align-items-center text-decoration-none d-flex flex-column justify-content-center text-white">
+                                    <h4>Create A New Trip</h4>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% continue; } %>
+                <div class="col mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="./trip" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" name="tripid" value="<%= mytrips[i].tripid %>">
+                                <button class="card text-center align-items-center text-decoration-none d-flex flex-column justify-content-center" type="submit">
+                                    <h5 class="card-title text-white"><%= mytrips[i].name %></h5>
+                                    <p class="card-text text-white">Admin: <%= (mytrips[i].isTripAdmin)?"You":mytrips[i].adminName %></p>
+                                </button>                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <h4><div id="errorMessage"></div></h4>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorMessage = "<%= errorMessage %>";
+            if (errorMessage && errorMessage.length > 0) {
+                const modal = new bootstrap.Modal(document.getElementById("errorModal"));
+                document.getElementById("errorMessage").textContent = errorMessage;
+                modal.show();
+
+                setTimeout(function () {
+                    modal.hide();
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html>

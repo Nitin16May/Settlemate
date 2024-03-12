@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+    <title>Reset</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-primary">
+        <div class="container">
+            <form action="./"><button class="navbar-brand btn btn-link">SettleMate</button></form>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <form action="./sendreset" method="post">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-Mail</label>
+                        <input type="email" name="email" id="email" class="form-control">
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary me-2">Reset Password</button>
+                        <a href="./login" class="btn btn-secondary">Log In</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <h4><div id="errorMessage"></div></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorMessage = "<%= errorMessage %>";
+            if (errorMessage && errorMessage.length > 0) {
+                const modal = new bootstrap.Modal(document.getElementById("errorModal"));
+                document.getElementById("errorMessage").textContent = errorMessage;
+                modal.show();
+
+                setTimeout(function () {
+                    modal.hide();
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html>

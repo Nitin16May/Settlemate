@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+    <title>Edit Transaction</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/transaction.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <form action="./">
+                <button class="navbar-brand btn btn-link">SettleMate</button>
+            </form>
+        </div>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+                <form action="./home" class="nav-link">
+                    <button class="btn btn-link text-white">Home</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form action="./profile" class="nav-link">
+                    <button class="btn btn-link text-white"><%= userName %></button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+      
+            <form action="./editingtransaction" method="post" onsubmit="return validateForm()">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="transactionid" value="<%= transactionid %>">
+
+
+                <div class="container my-5">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h1 class="text-primary">Edit Transaction Details:</h1>
+                            <div class="mb-3 form-group">
+                                <label for="currentStatus">Current Status:</label>
+                                <% if(((currentStatus==2 && isTripAdmin==false)||(currentStatus==1 && isTransactionAdmin==false))) {%>
+                                    <input type="text" name="currentStatus" value="<%= (currentStatus==0)? 'Active':(currentStatus==1 ? 'Removed' : 'Admin Removed') %>" readonly>
+                                    <% }else { %>
+                                    <select class="form-control" name="currentStatus" id="currentStatus">
+                                        <option value="0" <%= currentStatus==0 ? 'selected' : '' %>>Active</option>
+                                        <% if(isTransactionAdmin) { %>
+                                        <option value="1" <%= currentStatus==1 ? 'selected' : '' %>>Removed</option>
+                                        <% } %>
+                                        <% if(isTripAdmin) { %>
+                                        <option value="2" <%= currentStatus==2 ? 'selected' : '' %>>Admin Removed</option>
+                                        <% } %>
+                                    </select>
+                                <% } %>
+                            </div>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Reason</label>
+                                <input type="text" name="name" value="<%= reason %>"  class="form-control" <%= isTransactionAdmin ? '' : 'readonly' %>>
+                            </div>
+                            <div class="mb-3">
+                                <label for="amt" class="form-label">Amount:</label>
+                                <input type="number" name="amt" id="amt" value="<%= amt %>" class="form-control" <%= isTransactionAdmin ? '' : 'readonly' %>>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ownerName" class="form-label">Payed By:</label>
+                                <input type="text" name="ownerName" class="form-control" value="<%= ownerName %>" readonly>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary me-2">Save</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h1 class="text-primary">Edit Distributed Among:</h1>
+                            <ul>
+                                <h3 style="height: 70vh; overflow-y: auto;">
+                                    <% for(let i in debtor) { %>
+                                        <input type="checkbox" id="<%= i %>" name="debtorsToKeep" value="<%= debtor[i].token %>" style="width: 20px; height: 20px;" <%= debtor[i].isIn ? 'checked' : '' %> <%= isTransactionAdmin ? '' : 'readonly' %>>
+                                        <label for="<%= i %>"><%= debtor[i].name %> | (<%= debtor[i].email %>)</label><br>
+                                    <% } %>
+                                </h3>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="validationModalLabel">Validation Error</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="validationMessage"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                const readonlyCheckboxes = document.querySelectorAll('input[type="checkbox"][readonly]');
+                readonlyCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('click', (event) => {
+                        event.preventDefault();
+                    });
+                });
+            </script>
+            <script>
+                function validateForm() {
+                    const amt = document.getElementById("amt").value;
+                    const checkboxes = document.querySelectorAll("input[name='debtorsToKeep']:checked");
+                    if (amt <= 0) {
+                        document.getElementById("validationMessage").textContent = "Amount must be positive.";
+                        $('#validationModal').modal('show');
+                        return false;
+                    }
+                    
+                    if (checkboxes.length < 1) {
+                        document.getElementById("validationMessage").textContent = "Select at least one member.";
+                        $('#validationModal').modal('show');
+                        return false;
+                    }
+                    
+                    return true;
+                }
+            </script>
+        
+    </body>
+</html>

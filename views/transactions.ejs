@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+    <title>Transactions</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/transaction.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <form action="./"><button class="navbar-brand btn btn-link">SettleMate</button></form>
+        </div>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+                <form action="./home" class="nav-link">
+                    <button class="btn btn-link text-white">Home</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <form action="./profile" class="nav-link">
+                    <button class="btn btn-link text-white"><%= userName %></button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-8 text-lg-start">
+                <h1 style="font-size: 100px;"><%= name %></h1>
+            </div>
+            <div class="col-lg-4 align-items-center justify-content-center">
+                <form class="mt-3 mb-3" action="./addtransaction" method="post">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="tripid" value="<%= tripid %>">
+                    <button type="submit" class="btn btn-success">Add Transaction</button>
+                </form>
+                
+                <form action="./trip" method="post">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="tripid" value="<%= tripid %>">
+                    <button type="submit" class="btn btn-secondary">Back to Trip</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="container">
+        <h3>Active Transactions:</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center">Reason</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Added By</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i=0;i<transactions.length;i++) { if( transactions[i].currentStatus == 0 ) {%>
+                <tr>
+                    <td class="text-center">
+                        <form action="./transaction" method="post">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="transactionid" value="<%= transactions[i].transactionId %>">
+                            <button type="submit" class="btn btn-link"><%= transactions[i].name %></button>
+                        </form>
+                    </td>
+                    <td class="text-center"><%= transactions[i].amt %></td>
+                    <td class="text-center">
+                        <form action="./profile" method="post">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="userid" value="<%= transactions[i].ownerId %>">
+                            <button type="submit" class="btn btn-link"><%= transactions[i].ownerName %></button>
+                        </form>
+                    </td>
+                </tr>
+                <% }} %>
+            </tbody>
+        </table>
+            <h3>Deleted Transactions:</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Reason</th>
+                        <th class="text-center">Amount</th>
+                        <th class="text-center">Added By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(let i=0;i<transactions.length;i++) { if( transactions[i].currentStatus == 1 ) {%>
+                    <tr>
+                        <td class="text-center">
+                            <form action="./transaction" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" name="transactionid" value="<%= transactions[i].transactionId %>">
+                                <button type="submit" class="btn btn-link"><%= transactions[i].name %></button>
+                            </form>
+                        </td>
+                        <td class="text-center"><%= transactions[i].amt %></td>
+                        <td class="text-center">
+                            <form action="./profile" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" name="userid" value="<%= transactions[i].ownerId %>">
+                                <button type="submit" class="btn btn-link"><%= transactions[i].ownerName %></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% }} %>
+                </tbody>
+            </table>
+
+            <h3>Admin Deleted Transactions:</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Reason</th>
+                        <th class="text-center">Amount</th>
+                        <th class="text-center">Added By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(let i=0;i<transactions.length;i++) { if( transactions[i].currentStatus == 2 ) {%>
+                    <tr>
+                        <td class="text-center">
+                            <form action="./transaction" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" name="transactionid" value="<%= transactions[i].transactionId %>">
+                                <button type="submit" class="btn btn-link"><%= transactions[i].name %></button>
+                            </form>
+                        </td>
+                        <td class="text-center"><%= transactions[i].amt %></td>
+                        <td class="text-center">
+                            <form action="./profile" method="post">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" name="userid" value="<%= transactions[i].ownerId %>">
+                                <button type="submit" class="btn btn-link"><%= transactions[i].ownerName %></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% }} %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <h4><div id="errorMessage"></div></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorMessage = "<%= errorMessage %>";
+            if (errorMessage && errorMessage.length > 0) {
+                const modal = new bootstrap.Modal(document.getElementById("errorModal"));
+                document.getElementById("errorMessage").textContent = errorMessage;
+                modal.show();
+
+                setTimeout(function () {
+                    modal.hide();
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html>

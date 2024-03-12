@@ -1,0 +1,14 @@
+.table th.text-center:first-child,
+.table td.text-center:first-child {
+    width: 60%;
+}
+
+.table th.text-center:nth-child(2),
+.table td.text-center:nth-child(2) {
+    width: 15%;
+}
+
+.table th.text-center:last-child,
+.table td.text-center:last-child {
+    width: 25%;
+}
